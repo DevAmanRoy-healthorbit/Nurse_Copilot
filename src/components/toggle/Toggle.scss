@@ -5,6 +5,10 @@
   gap: 8px;
   cursor: pointer;
   overflow: hidden;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  width: 100%;
+  max-width: fit-content;
 
   background-color: #ececf1;
   color: #101010;
@@ -29,7 +33,7 @@
   }
 
   .toggle-background {
-    background-color: #101010;
+    background-color: #4121b3;
     position: absolute;
     top: 0px;
     left: 0px;

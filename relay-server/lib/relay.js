@@ -47,6 +47,7 @@ export class RealtimeRelay {
     const messageHandler = (data) => {
       try {
         const event = JSON.parse(data);
+        console.log(event, "event");
         this.log(`Relaying "${event.type}" to OpenAI`);
         client.realtime.send(event.type, event);
       } catch (e) {
@@ -57,6 +58,7 @@ export class RealtimeRelay {
     ws.on('message', (data) => {
       if (!client.isConnected()) {
         messageQueue.push(data);
+        console.log(messageQueue,"messageQueuw")
       } else {
         messageHandler(data);
       }
