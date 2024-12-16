@@ -20,10 +20,10 @@ db.connect((err) => {
 
 // API to save conversation
 app.post('/save-conversation', cors(), (req, res) => {
-    const data = {"user_message":req.body}
+    const data = {"message":req.body}
     console.log(data);
 
-const query = "INSERT INTO conversation (user_message) VALUES (?)";
+const query = "INSERT INTO copilot_conversation (message) VALUES (?)";
 
 // Use parameterized query to safely insert data
 db.query(query, JSON.stringify(data), (err, result) => {
