@@ -15,6 +15,8 @@ import talkingAnimation from '../assets/82jkQElwGr.json';
 import './ConsolePage.scss';
 import Lottie, { useLottie } from 'lottie-react';
 
+import * as CryptoJS from 'crypto-js';
+
 /**
  * Type for result from get_weather() function call
  */
@@ -43,6 +45,7 @@ interface RealtimeEvent {
 }
 
 export function ConsolePage() {
+  
   // API Key from environment
   const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
 
@@ -211,22 +214,60 @@ export function ConsolePage() {
     }
     console.log
     try {
-      const response = await fetch('http://localhost:3001/save-conversation', {
+      const response = await fetch('http://35.86.170.109:3001/save-conversation', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(payload)
       });
-      const result = await response.json();
-      if (result) {
-        console.log(result);
+      if(response.status === 200){
+        const result = await response.json();
+        if (result) {
+          console.log(result.patient_details.name);
+          const createPatientPayload = {name:result.patient_details.name, id:null};
+          createPatient(createPatientPayload)
+        }
       }
     } catch (error) {
       console.error('Error saving user response:', error);
     }
   };
   const [accumulatedItems, setAccumulatedItems] = useState<ItemType[]>([]);
+
+  const createPatient = async (payload:{name:string, id:string|null})=>{
+    const  response = await (await fetch('https://stage-api.healthorbit.ai/api/v1/add-patient/separate',{
+      method:"POST",
+      body:JSON.stringify(payload),
+      headers:{
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${decryptToken(window.location.href.split('key=')[1])}`
+      }
+    })).json();
+    if(response){
+      console.log(response);
+    }
+  }
+
+
+  const decryptToken = (data:string)=>{
+    try {
+      console.log(data)
+      const bytes = CryptoJS.AES.decrypt(data, 'YOUR_CRYPTO_SECRET_KEY');
+      const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+      if (!decryptedData) {
+        throw new Error('Decryption failed: Malformed UTF-8 data');
+      }
+      return JSON.parse(decryptedData);
+    } catch (error) {
+      return null;
+    }
+  }
+
+  useEffect(()=>{
+    console.log(decryptToken(window.location.href.split('key=')[1]))
+  },[])
+
 
   
 //   const saveuserResponse = async (data: any) => {
